@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  -  docker build -t cobwebfx/react-test -f ./client/Dockerfile.test ./client
+
+script:
+  - docker run -e CI=true cobwebfx/react-test npm test
+
+after_success:
+  # Build Docker images
+  - docker build -t cobwebfx/multi-go-client ./client
+  - docker build -t cobwebfx/multi-go-nginx ./nginx
+  - docker build -t cobwebfx/multi-go-server ./server
+  - docker build -t cobwebfx/multi-go-worker ./worker
+  # Log in to Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to Docker Hub
+  - docker push cobwebfx/multi-go-client
+  - docker push cobwebfx/multi-go-nginx
+  - docker push cobwebfx/multi-go-server
+  - docker push cobwebfx/multi-go-worker
