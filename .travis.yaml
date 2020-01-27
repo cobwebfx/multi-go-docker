@@ -1,15 +1,11 @@
 sudo: required
 services:
   - docker
-
-language: javascript
-
+language: node_js
 before_install:
   -  docker build -t cobwebfx/react-test -f ./client/Dockerfile.dev ./client
-
 script:
   - docker run -e CI=true cobwebfx/react-test npm test
-
 after_success:
   # Build Docker images
   - docker build -t cobwebfx/multi-go-client ./client
