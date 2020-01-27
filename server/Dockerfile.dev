@@ -1,0 +1,8 @@
+FROM golang:latest
+RUN go get github.com/pilu/fresh
+#RUN mkdir /app
+WORKDIR /app
+COPY ./ ./
+#VOLUME ./src .
+#CMD fresh
+CMD fresh

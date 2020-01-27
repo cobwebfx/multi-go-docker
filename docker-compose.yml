@@ -1,0 +1,59 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:latest
+  redis:
+    image: redis:latest
+  nginx:
+    depends_on:
+      - api
+      - client
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - 3050:80
+# called api instead if server because server is a reserved word in nginx
+  api:
+    depends_on:
+      - redis
+      - postgres
+    restart: on-failure
+    build:
+#      context=folder; context/dockerfile
+      context: ./server
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./server:/app
+    environment:
+#      - The host is whatever we call the redis image ^above^ (line 5)
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+#      - Again, host is defined in this file (line 3)
+      - PGHOST=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=postgres_password
+      - PGDATABASE=postgres
+      - PGPORT=5432
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+  worker:
+    depends_on:
+      - redis
+      - postgres
+    restart: on-failure
+    build:
+      context: ./worker
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./worker:/app
+#  tests:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.test
