@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  -  docker build -t cobwebfx/react-test -f ./client/Dockerfile.test ./client
+  -  docker build -t cobwebfx/react-test -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true cobwebfx/react-test npm test
