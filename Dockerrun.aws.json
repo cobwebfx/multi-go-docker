@@ -5,7 +5,6 @@
       "name": "client",
       "image": "cobwebfx/multi-go-client",
       "hostname": "client",
-      "//node": "If essential is true, if it crashes, all containers are shut down",
       "essential": false,
       "memory": 128
     },
@@ -28,6 +27,7 @@
     {
       "name": "nginx",
       "image": "cobwebfx/multi-go-nginx",
+      "hostname": "nginx",
       "essential": true,
       "portMappings": [
         {
