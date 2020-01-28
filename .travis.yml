@@ -14,8 +14,29 @@ after_success:
   - docker build -t cobwebfx/multi-go-worker ./worker
   # Log in to Docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+
   # Push images to Docker Hub
   - docker push cobwebfx/multi-go-client
   - docker push cobwebfx/multi-go-nginx
   - docker push cobwebfx/multi-go-server
   - docker push cobwebfx/multi-go-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-east-2
+  app: multi-go-docker
+  env: MultiGoDocker-env
+#  bucket is created automatically. You just need to go and find it
+  bucket_name: elasticbeanstalk-us-east-2-366195162601
+  bucket_path: multi-go-docker
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+
+#    deploy:
+#    edge: true
+#    provider: elasticbeanstalk
+#    ...
+#    //access_key_id: $AWS_ACCESS_KEY
+#    //secret_access_key: $AWS_SECRET_KEY

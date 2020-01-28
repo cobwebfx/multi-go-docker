@@ -1,0 +1,36 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "client",
+      "image": "cobwebfx/multi-go-client",
+      "hostname": "client",
+      "//node": "If essential is true, if it crashes, all containers are shut down",
+      "essential": false
+    },
+    {
+      "name": "server",
+      "image": "cobwebfx/multi-go-server",
+      "hostname": "api",
+      "essential": false
+    },
+    {
+      "name": "worker",
+      "image": "cobwebfx/multi-go-worker",
+      "hostname": "worker",
+      "essential": false
+    },
+    {
+      "name": "nginx",
+      "image": "cobwebfx/multi-go-nginx",
+      "essential": true,
+      "portMappings": {
+        "hostPort": 80,
+        "containerPort": 80
+      },
+      "links": ["client", "server"]
+    }
+  ]
+}
+
+
